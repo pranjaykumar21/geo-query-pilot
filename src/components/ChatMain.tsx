@@ -167,24 +167,22 @@ const ChatMain: React.FC = () => {
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="border-t border-border p-4">
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-          <div className="flex items-end space-x-3">
-            <div className="flex-1">
-              <Input
-                type="text"
-                placeholder="Ask about locations, demographics, spatial patterns, ATM locations, branch offices..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                disabled={uiState.isLoading}
-                className="h-12 text-base resize-none"
-                autoFocus
-              />
-            </div>
+      <div className="border-t border-border p-6">
+        <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Ask about locations, demographics, spatial patterns, ATM locations, branch offices..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              disabled={uiState.isLoading}
+              className="h-16 text-lg px-6 pr-16 rounded-2xl border-2 shadow-lg focus:shadow-xl transition-all duration-200"
+              autoFocus
+            />
             <Button
               type="submit"
               disabled={!inputValue.trim() || uiState.isLoading}
-              className="h-12 px-6"
+              className="absolute right-2 top-2 h-12 w-12 rounded-xl p-0"
             >
               {uiState.isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
