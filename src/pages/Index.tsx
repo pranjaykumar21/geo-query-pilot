@@ -1,30 +1,24 @@
 import React from 'react';
-import MapView from '../components/MapView';
-import CommandBar from '../components/CommandBar';
-import FocusView from '../components/FocusView';
+import ChatSidebar from '../components/ChatSidebar';
+import ChatMain from '../components/ChatMain';
+import MapPanel from '../components/MapPanel';
+import ToolsPanel from '../components/ToolsPanel';
 
 const Index = () => {
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-background">
-      {/* Main Map View */}
-      <MapView />
+    <div className="flex h-screen bg-background overflow-hidden">
+      {/* Left Sidebar - Conversation History */}
+      <ChatSidebar />
       
-      {/* Command Interface */}
-      <CommandBar />
+      {/* Center - Chat Interface */}
+      <div className="flex-1 flex flex-col">
+        <ChatMain />
+      </div>
       
-      {/* Focus Object Details */}
-      <FocusView />
-      
-      {/* Header */}
-      <div className="absolute top-4 left-4 z-10">
-        <div className="glass rounded-xl p-4">
-          <h1 className="text-xl font-bold text-foreground">
-            GeoQuery-NLP
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Geospatial Command Center
-          </p>
-        </div>
+      {/* Right Panel - Map and Tools */}
+      <div className="w-1/2 flex flex-col border-l border-border">
+        <ToolsPanel />
+        <MapPanel />
       </div>
     </div>
   );
