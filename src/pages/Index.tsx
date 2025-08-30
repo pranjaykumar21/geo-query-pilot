@@ -1,11 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React from 'react';
+import MapView from '../components/MapView';
+import CommandBar from '../components/CommandBar';
+import FocusView from '../components/FocusView';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="relative w-full h-screen overflow-hidden bg-background">
+      {/* Main Map View */}
+      <MapView />
+      
+      {/* Command Interface */}
+      <CommandBar />
+      
+      {/* Focus Object Details */}
+      <FocusView />
+      
+      {/* Header */}
+      <div className="absolute top-4 left-4 z-10">
+        <div className="glass rounded-xl p-4">
+          <h1 className="text-xl font-bold text-foreground">
+            GeoQuery-NLP
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Geospatial Command Center
+          </p>
+        </div>
       </div>
     </div>
   );
