@@ -16,7 +16,7 @@ const ToolsPanel: React.FC = () => {
   const viewModeOptions = [
     { mode: 'markers' as const, icon: Map, label: 'Markers', description: 'Point visualization' },
     { mode: 'heatmap' as const, icon: BarChart3, label: 'Heatmap', description: 'Density analysis' },
-    { mode: '3d' as const, icon: Box, label: '3D View', description: 'Spatial elevation' },
+    { mode: '3D' as const, icon: Box, label: '3D View', description: 'Spatial elevation' },
   ];
 
   const analysisTools = [

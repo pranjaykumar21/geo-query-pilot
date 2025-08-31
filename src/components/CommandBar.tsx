@@ -72,7 +72,7 @@ const CommandBar: React.FC = () => {
   const viewModeButtons = [
     { mode: 'markers' as const, icon: Map, label: 'Markers' },
     { mode: 'heatmap' as const, icon: BarChart3, label: 'Heatmap' },
-    { mode: '3d' as const, icon: Box, label: '3D' },
+    { mode: '3D' as const, icon: Box, label: '3D' },
   ];
 
   return (

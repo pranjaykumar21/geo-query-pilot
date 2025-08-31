@@ -14,9 +14,12 @@ export interface ViewState {
 
 export interface UIState {
   isLoading: boolean;
-  viewMode: 'markers' | 'heatmap' | '3d';
+  viewMode: 'markers' | 'heatmap' | '3D';
   isPrivacyMode: boolean;
   focusedObject: any | null;
+  showMapPanel: boolean;
+  showSystemInfo: boolean;
+  awaitingMapDecision: boolean;
 }
 
 export interface Message {
@@ -44,12 +47,15 @@ export interface StoreState {
   setViewState: (newViewState: Partial<ViewState>) => void;
   startQuery: () => void;
   endQuery: (results: any) => void;
-  setViewMode: (mode: 'markers' | 'heatmap' | '3d') => void;
+  setViewMode: (mode: 'markers' | 'heatmap' | '3D') => void;
   togglePrivacyMode: () => void;
   setFocusedObject: (object: any) => void;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   clearFocus: () => void;
   resetToDelhi: () => void;
+  setShowMapPanel: (show: boolean) => void;
+  setShowSystemInfo: (show: boolean) => void;
+  setAwaitingMapDecision: (awaiting: boolean) => void;
 }
 
 // Default Delhi coordinates for initial view
@@ -74,6 +80,9 @@ export const useStore = create<StoreState>((set, get) => ({
     viewMode: 'markers',
     isPrivacyMode: false,
     focusedObject: null,
+    showMapPanel: false,
+    showSystemInfo: false,
+    awaitingMapDecision: false,
   },
   
   conversationHistory: [
@@ -133,6 +142,21 @@ export const useStore = create<StoreState>((set, get) => ({
       viewMode: 'markers',
       isPrivacyMode: false,
       focusedObject: null,
+      showMapPanel: false,
+      showSystemInfo: false,
+      awaitingMapDecision: false,
     }
+  })),
+
+  setShowMapPanel: (show) => set((state) => ({
+    uiState: { ...state.uiState, showMapPanel: show, awaitingMapDecision: false }
+  })),
+
+  setShowSystemInfo: (show) => set((state) => ({
+    uiState: { ...state.uiState, showSystemInfo: show }
+  })),
+
+  setAwaitingMapDecision: (awaiting) => set((state) => ({
+    uiState: { ...state.uiState, awaitingMapDecision: awaiting }
   })),
 }));

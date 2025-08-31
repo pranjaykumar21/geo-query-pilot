@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Plus, Settings, Shield, RotateCcw } from 'lucide-react';
+import { MessageCircle, Plus, Settings, Shield, RotateCcw, X } from 'lucide-react';
 import { useStore } from '../stores/useStore';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
@@ -10,7 +10,8 @@ const ChatSidebar: React.FC = () => {
     conversationHistory, 
     uiState,
     togglePrivacyMode,
-    resetToDelhi 
+    resetToDelhi,
+    setShowMapPanel
   } = useStore();
 
   const formatTime = (date: Date) => {
@@ -22,14 +23,24 @@ const ChatSidebar: React.FC = () => {
   };
 
   return (
-    <div className="w-80 bg-card border-r border-border flex flex-col h-full">
+    <div className="w-64 bg-card border-r border-border flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-lg font-semibold text-foreground">GeoQuery-NLP</h1>
-            <p className="text-sm text-muted-foreground">Geospatial Command Center</p>
+            <h1 className="text-lg font-semibold text-foreground">History</h1>
+            <p className="text-sm text-muted-foreground">Recent conversations</p>
           </div>
+          {uiState.showMapPanel && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowMapPanel(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
         </div>
         
         <Button 

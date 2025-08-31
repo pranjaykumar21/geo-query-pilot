@@ -80,7 +80,7 @@ const MapView: React.FC = () => {
           })
         ];
 
-      case '3d':
+      case '3D':
         return [
           new ScatterplotLayer({
             id: 'scatterplot-3d-layer',
