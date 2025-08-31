@@ -4,8 +4,8 @@ import { ScatterplotLayer } from '@deck.gl/layers';
 import { HeatmapLayer, ContourLayer } from '@deck.gl/aggregation-layers';
 import { useStore } from '../stores/useStore';
 
-// You'll need to set your Mapbox token
-const MAPBOX_ACCESS_TOKEN = 'your-mapbox-token-here';
+// Demo mode - using canvas background instead of Mapbox
+const MAPBOX_ACCESS_TOKEN = null;
 
 const MapView: React.FC = () => {
   const { 
@@ -146,7 +146,7 @@ const MapView: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-full min-h-[400px] sm:min-h-[500px] lg:min-h-[600px]">
       <DeckGL
         viewState={viewState}
         onViewStateChange={({ viewState: newViewState }) => setViewState(newViewState as any)}
@@ -156,9 +156,9 @@ const MapView: React.FC = () => {
         getTooltip={({ object }) => 
           object && {
             html: `
-              <div class="p-3 bg-card/95 backdrop-blur border border-border rounded-lg shadow-lg max-w-xs">
-                <h3 class="font-semibold text-card-foreground">${object.properties.name || 'Location'}</h3>
-                <div class="mt-2 space-y-1 text-sm text-muted-foreground">
+              <div class="p-2 sm:p-3 bg-card/95 backdrop-blur border border-border rounded-lg shadow-lg max-w-xs">
+                <h3 class="font-semibold text-card-foreground text-sm sm:text-base">${object.properties.name || 'Location'}</h3>
+                <div class="mt-2 space-y-1 text-xs sm:text-sm text-muted-foreground">
                   ${Object.entries(object.properties)
                     .slice(0, 4)
                     .map(([key, value]) => `<div><span class="font-medium">${key}:</span> ${value}</div>`)
@@ -173,23 +173,36 @@ const MapView: React.FC = () => {
           }
         }
       >
-        {/* Dark themed background for demo */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+        {/* Animated 3D background with gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900 animate-pulse" 
+             style={{ animationDuration: '4s' }} />
+        
+        {/* Floating geometric shapes for 3D effect */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-10 left-10 w-4 h-4 bg-primary/20 rounded-full animate-float" 
+               style={{ animationDelay: '0s' }} />
+          <div className="absolute top-32 right-20 w-6 h-6 bg-accent/20 rounded-full animate-float" 
+               style={{ animationDelay: '1s' }} />
+          <div className="absolute bottom-20 left-32 w-3 h-3 bg-secondary/20 rounded-full animate-float" 
+               style={{ animationDelay: '2s' }} />
+          <div className="absolute bottom-40 right-10 w-5 h-5 bg-primary/20 rounded-full animate-float" 
+               style={{ animationDelay: '3s' }} />
+        </div>
       </DeckGL>
 
       {/* Loading Overlay */}
       {uiState.isLoading && (
         <div className="absolute inset-0 bg-background/20 backdrop-blur-sm flex items-center justify-center z-10">
-          <div className="glass rounded-2xl p-8 flex items-center space-x-4">
-            <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-            <span className="text-lg font-medium text-foreground">Processing query...</span>
+          <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-8 flex items-center space-x-2 sm:space-x-4 scale-in">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            <span className="text-sm sm:text-lg font-medium text-foreground">Processing query...</span>
           </div>
         </div>
       )}
 
-      {/* Map Controls Overlay */}
-      <div className="absolute top-4 right-4 z-5">
-        <div className="glass rounded-xl p-3 space-y-2">
+      {/* Map Controls Overlay - Responsive */}
+      <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-5">
+        <div className="glass rounded-lg sm:rounded-xl p-2 sm:p-3 space-y-1 sm:space-y-2 backdrop-blur-md">
           <div className="text-xs font-mono text-muted-foreground">
             Zoom: {viewState.zoom.toFixed(1)}
           </div>
@@ -197,7 +210,7 @@ const MapView: React.FC = () => {
             Pitch: {viewState.pitch.toFixed(0)}°
           </div>
           {queryResults && (
-            <div className="text-xs font-mono text-primary">
+            <div className="text-xs font-mono text-primary font-semibold">
               {queryResults.features?.length || 0} points
             </div>
           )}
