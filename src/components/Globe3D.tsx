@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere, Float, Text3D, Points, PointMaterial } from '@react-three/drei';
+import { OrbitControls, Sphere, Float, Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Animated globe with data points
@@ -125,18 +125,15 @@ const Globe3D: React.FC<{ className?: string }> = ({ className = "" }) => {
         {/* Floating Elements */}
         <FloatingElements />
 
-        {/* 3D Text */}
+        {/* Floating label with simple geometry */}
         <Float speed={1} rotationIntensity={0.1} floatIntensity={0.5}>
           <group position={[0, -4, 0]}>
-            <Text3D
-              font="/fonts/Inter_Bold.json"
-              size={0.4}
-              height={0.1}
-              position={[0, 0, 0]}
-            >
-              GeoQuery
+            <Sphere args={[0.02, 8, 8]} position={[-0.8, 0, 0]}>
               <meshStandardMaterial color="#06b6d4" />
-            </Text3D>
+            </Sphere>
+            <Sphere args={[0.02, 8, 8]} position={[0.8, 0, 0]}>
+              <meshStandardMaterial color="#06b6d4" />
+            </Sphere>
           </group>
         </Float>
 
