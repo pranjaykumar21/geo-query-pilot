@@ -27,11 +27,13 @@ export default {
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
-					glow: 'hsl(var(--primary-glow))'
+					glow: 'hsl(var(--primary-glow))',
+					hover: 'hsl(var(--primary-hover))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					foreground: 'hsl(var(--secondary-foreground))',
+					glow: 'hsl(var(--secondary-glow))'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -67,13 +69,18 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-secondary': 'var(--gradient-secondary)',
 				'gradient-glass': 'var(--gradient-glass)',
-				'gradient-command': 'var(--gradient-command)'
+				'gradient-command': 'var(--gradient-command)',
+				'gradient-hero': 'var(--gradient-hero)'
 			},
 			boxShadow: {
 				'glow': 'var(--shadow-glow)',
+				'glow-secondary': 'var(--shadow-glow-secondary)',
 				'glass': 'var(--shadow-glass)',
-				'command': 'var(--shadow-command)'
+				'command': 'var(--shadow-command)',
+				'elegant': 'var(--shadow-elegant)',
+				'float': 'var(--shadow-float)'
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -81,6 +88,8 @@ export default {
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
+				xl: 'var(--radius-lg)',
+				'2xl': 'var(--radius-xl)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
