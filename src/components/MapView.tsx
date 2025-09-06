@@ -92,7 +92,7 @@ const MapView: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-gray-100">
+    <div className="relative w-full h-full overflow-hidden bg-slate-50">
       {/* Top Header Bar */}
       <div className="absolute top-0 left-0 right-0 z-20 bg-slate-800/95 backdrop-blur border-b border-slate-700">
         <div className="flex items-center justify-between px-4 py-2">
