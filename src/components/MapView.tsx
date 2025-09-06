@@ -92,7 +92,7 @@ const MapView: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-slate-50">
+    <div className="relative w-full h-full overflow-hidden bg-gray-900">
       {/* Top Header Bar */}
       <div className="absolute top-0 left-0 right-0 z-20 bg-slate-800/95 backdrop-blur border-b border-slate-700">
         <div className="flex items-center justify-between px-4 py-2">
@@ -139,25 +139,25 @@ const MapView: React.FC = () => {
             style={{ minWidth: '100%', minHeight: '100%' }}
           >
             {/* Background */}
-            <rect width="800" height="600" fill="#f8f9fa" />
+            <rect width="800" height="600" fill="#111827" />
             
             {/* Rivers */}
-            <path d="M100 300 Q400 280 700 320" stroke="#87CEEB" strokeWidth="8" fill="none" opacity="0.7" />
+            <path d="M100 300 Q400 280 700 320" stroke="#1e40af" strokeWidth="6" fill="none" opacity="0.5" />
             
             {/* Major Roads */}
-            <path d="M0 200 L800 200" stroke="#E5E7EB" strokeWidth="4" />
-            <path d="M0 400 L800 400" stroke="#E5E7EB" strokeWidth="4" />
-            <path d="M200 0 L200 600" stroke="#E5E7EB" strokeWidth="4" />
-            <path d="M600 0 L600 600" stroke="#E5E7EB" strokeWidth="4" />
+            <path d="M0 200 L800 200" stroke="#374151" strokeWidth="2" />
+            <path d="M0 400 L800 400" stroke="#374151" strokeWidth="2" />
+            <path d="M200 0 L200 600" stroke="#374151" strokeWidth="2" />
+            <path d="M600 0 L600 600" stroke="#374151" strokeWidth="2" />
             
             {/* Highways */}
-            <path d="M50 150 L750 180" stroke="#FCD34D" strokeWidth="3" />
-            <path d="M80 450 L720 420" stroke="#FCD34D" strokeWidth="3" />
+            <path d="M50 150 L750 180" stroke="#4b5563" strokeWidth="3" />
+            <path d="M80 450 L720 420" stroke="#4b5563" strokeWidth="3" />
             
             {/* Green areas - Parks */}
-            <circle cx="150" cy="120" r="40" fill="#10B981" opacity="0.3" />
-            <circle cx="500" cy="180" r="30" fill="#10B981" opacity="0.3" />
-            <circle cx="650" cy="350" r="50" fill="#10B981" opacity="0.3" />
+            <circle cx="150" cy="120" r="40" fill="#064e3b" opacity="0.4" />
+            <circle cx="500" cy="180" r="30" fill="#064e3b" opacity="0.4" />
+            <circle cx="650" cy="350" r="50" fill="#064e3b" opacity="0.4" />
           </svg>
 
           {/* Central Red Pin */}
@@ -184,21 +184,20 @@ const MapView: React.FC = () => {
               }}
               onClick={() => setSelectedMarker(poi)}
             >
-              <div 
-                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white relative"
-                style={{ backgroundColor: poi.color }}
-              >
-                {poi.type === 'historical' && <Home className="w-3 h-3" />}
-                {poi.type === 'transport' && <Plane className="w-3 h-3" />}
-                {poi.type === 'shopping' && <ShoppingBag className="w-3 h-3" />}
-                {poi.type === 'park' && <Trees className="w-3 h-3" />}
-                {poi.type === 'religious' && <div className="w-2 h-2 bg-white rounded-full" />}
-                {poi.type === 'museum' && <div className="w-2 h-2 bg-white rounded-full" />}
+              {/* Glowing Effect */}
+              <div className="absolute inset-0 w-8 h-8 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="w-full h-full bg-cyan-400/30 rounded-full blur-md"></div>
+                <div className="absolute inset-1 bg-cyan-400/50 rounded-full blur-sm"></div>
+              </div>
+              
+              {/* Main Marker */}
+              <div className="relative w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center border-2 border-cyan-300 shadow-lg shadow-cyan-400/50">
+                <div className="w-2 h-2 bg-white rounded-full"></div>
               </div>
               
               {/* POI Label */}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="bg-white/95 backdrop-blur px-2 py-1 rounded shadow-lg border text-xs font-medium text-gray-800 whitespace-nowrap">
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="bg-gray-800/95 backdrop-blur px-2 py-1 rounded shadow-lg border border-gray-600 text-xs font-medium text-cyan-300 whitespace-nowrap">
                   {poi.name}
                 </div>
               </div>
@@ -208,9 +207,9 @@ const MapView: React.FC = () => {
           {/* Hospital markers */}
           {activeLayers.hospitals && (
             <>
-              <div className="absolute w-3 h-3 bg-red-500 rounded-full border border-white" 
+              <div className="absolute w-3 h-3 bg-red-400 rounded-full border border-red-300 shadow-lg shadow-red-400/50" 
                    style={{ left: '350px', top: '250px', zIndex: 10 }} />
-              <div className="absolute w-3 h-3 bg-red-500 rounded-full border border-white" 
+              <div className="absolute w-3 h-3 bg-red-400 rounded-full border border-red-300 shadow-lg shadow-red-400/50" 
                    style={{ left: '450px', top: '350px', zIndex: 10 }} />
             </>
           )}
@@ -218,9 +217,9 @@ const MapView: React.FC = () => {
           {/* ATM markers */}
           {activeLayers.atms && (
             <>
-              <div className="absolute w-3 h-3 bg-blue-500 rounded-full border border-white" 
+              <div className="absolute w-3 h-3 bg-blue-400 rounded-full border border-blue-300 shadow-lg shadow-blue-400/50" 
                    style={{ left: '320px', top: '280px', zIndex: 10 }} />
-              <div className="absolute w-3 h-3 bg-blue-500 rounded-full border border-white" 
+              <div className="absolute w-3 h-3 bg-blue-400 rounded-full border border-blue-300 shadow-lg shadow-blue-400/50" 
                    style={{ left: '480px', top: '320px', zIndex: 10 }} />
             </>
           )}
@@ -235,9 +234,9 @@ const MapView: React.FC = () => {
           )}
 
           {/* Road Labels */}
-          <div className="absolute text-xs font-medium text-gray-600" style={{ left: '100px', top: '190px' }}>A44</div>
-          <div className="absolute text-xs font-medium text-gray-600" style={{ left: '500px', top: '390px' }}>NE3</div>
-          <div className="absolute text-xs font-medium text-gray-600" style={{ left: '650px', top: '250px' }}>Sector 62</div>
+          <div className="absolute text-xs font-medium text-gray-400" style={{ left: '100px', top: '190px' }}>A44</div>
+          <div className="absolute text-xs font-medium text-gray-400" style={{ left: '500px', top: '390px' }}>NE3</div>
+          <div className="absolute text-xs font-medium text-gray-400" style={{ left: '650px', top: '250px' }}>Sector 62</div>
         </div>
       </div>
 
