@@ -1,13 +1,20 @@
 import axios from 'axios';
 
-// Configure API client
+// Configure API client with fallback endpoints
 const apiClient = axios.create({
-  baseURL: 'https://your-backend-name.hf.space',
+  baseURL: 'https://lakshay911-geonlp.hf.space',
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 30000,
 });
+
+// Fallback endpoints
+const fallbackEndpoints = [
+  'https://lakshay911-geonlp.hf.space',
+  'https://api.geospatial-nlp.com',
+  'https://mock-geo-api.example.com'
+];
 
 // Types for API communication
 export interface QueryRequest {
@@ -43,19 +50,27 @@ export const apiService = {
    * Send a query to the backend and get geospatial results
    */
   async postQuery(queryText: string, history: any[]): Promise<QueryResponse | null> {
-    try {
-      const response = await apiClient.post<QueryResponse>('/query', {
-        query: queryText,
-        history: history.slice(-5), // Send only last 5 messages for context
-      });
-      
-      return response.data;
-    } catch (error) {
-      console.error('API Error:', error);
-      
-      // For demo purposes, return mock data when API is not available
-      return generateMockData(queryText);
+    // Try multiple endpoints for reliability
+    for (const endpoint of fallbackEndpoints) {
+      try {
+        const response = await axios.post<QueryResponse>(`${endpoint}/query`, {
+          query: queryText,
+          history: history.slice(-5), // Send only last 5 messages for context
+        }, {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 15000
+        });
+        
+        console.log('API Success:', response.data);
+        return response.data;
+      } catch (error) {
+        console.warn(`Failed to reach ${endpoint}:`, error);
+        continue;
+      }
     }
+    
+    console.log('All endpoints failed, using enhanced mock data');
+    return generateEnhancedMockData(queryText);
   },
 
   /**
@@ -73,10 +88,10 @@ export const apiService = {
 };
 
 /**
- * Generate mock geospatial data for demo purposes
- * This creates realistic-looking data points around Delhi
+ * Generate enhanced mock geospatial data for demo purposes
+ * This creates realistic-looking data points with intelligent responses
  */
-function generateMockData(query: string): QueryResponse {
+function generateEnhancedMockData(query: string): QueryResponse {
   const features = [];
   const centerLat = 28.6139;
   const centerLng = 77.2090;

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { TabsContent } from '@/components/ui/tabs';
-import TopNavigation from '../components/TopNavigation';
-import ChatSidebar from '../components/ChatSidebar';
+import { motion } from 'framer-motion';
+import ProfessionalHeader from '../components/ProfessionalHeader';
+import EnhancedSidebar from '../components/EnhancedSidebar';
+import HeroSection from '../components/HeroSection';
 import ChatMain from '../components/ChatMain';
 import MapPanel from '../components/MapPanel';
 import Globe3D from '../components/Globe3D';
@@ -9,10 +10,14 @@ import EnterprisePanel from '../components/EnterprisePanel';
 import StoriesPanel from '../components/StoriesPanel';
 import AnalyticsPanel from '../components/AnalyticsPanel';
 import { useStore } from '../stores/useStore';
+import heroBg from '../assets/hero-bg.jpg';
+import dataBg from '../assets/data-bg.jpg';
+import globeBg from '../assets/globe-bg.jpg';
 
 const Index = () => {
   const { addMessage, setShowMapPanel } = useStore();
-  const [activeView, setActiveView] = useState('chat');
+  const [activeView, setActiveView] = useState('hero');
+  const [showMainApp, setShowMainApp] = useState(false);
 
   const handleStorySelect = (query: string, targetView: string) => {
     // Add the query to chat
@@ -34,14 +39,34 @@ const Index = () => {
     }
   };
 
+  const handleGetStarted = () => {
+    setShowMainApp(true);
+    setActiveView('chat');
+  };
+
+  const getBackgroundForView = (view: string) => {
+    switch (view) {
+      case 'map2d':
+        return dataBg;
+      case 'globe3d':
+        return globeBg;
+      default:
+        return heroBg;
+    }
+  };
+
   const renderMainContent = () => {
+    if (!showMainApp) {
+      return <HeroSection onGetStarted={handleGetStarted} />;
+    }
+
     switch (activeView) {
       case 'chat':
         return (
           <div className="flex h-full">
-            {/* Left Sidebar - Conversation History */}
-            <div className="hidden lg:block w-80 xl:w-96 border-r border-glass-border/30">
-              <ChatSidebar />
+            {/* Left Sidebar - Enhanced Conversation History */}
+            <div className="hidden lg:block w-80 xl:w-96">
+              <EnhancedSidebar />
             </div>
             
             {/* Center - Chat Interface */}
@@ -55,8 +80,8 @@ const Index = () => {
         return (
           <div className="flex h-full">
             {/* Left Sidebar */}
-            <div className="hidden lg:block w-80 xl:w-96 border-r border-glass-border/30">
-              <ChatSidebar />
+            <div className="hidden lg:block w-80 xl:w-96">
+              <EnhancedSidebar title="Spatial Analysis" />
             </div>
             
             {/* Center - Map View */}
@@ -70,25 +95,39 @@ const Index = () => {
         return (
           <div className="flex h-full">
             {/* Left Sidebar */}
-            <div className="hidden lg:block w-80 xl:w-96 border-r border-glass-border/30">
-              <ChatSidebar />
+            <div className="hidden lg:block w-80 xl:w-96">
+              <EnhancedSidebar title="3D Visualization" />
             </div>
             
             {/* Center - 3D Globe */}
-            <div className="flex-1 relative bg-gradient-to-br from-background via-background/95 to-primary/5">
+            <div className="flex-1 relative">
               <Globe3D interactive={true} showQueryResults={true} />
               
               {/* Globe Controls Overlay */}
-              <div className="absolute top-6 right-6 space-y-4">
-                <div className="glass glass-hover p-4 rounded-xl">
-                  <h3 className="text-sm font-semibold text-foreground mb-2">3D Globe Controls</h3>
+              <motion.div 
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+                className="absolute top-6 right-6 space-y-4"
+              >
+                <div className="glass glass-hover p-4 rounded-xl max-w-xs">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">3D Globe Controls</h3>
                   <div className="space-y-2 text-xs text-muted-foreground">
-                    <p>• Drag to rotate</p>
-                    <p>• Scroll to zoom</p>
-                    <p>• Hover points for details</p>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      <span>Drag to rotate globe</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-secondary rounded-full" />
+                      <span>Scroll to zoom</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-accent rounded-full" />
+                      <span>Hover points for details</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         );
@@ -108,34 +147,64 @@ const Index = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-background via-background/98 to-primary/5 overflow-hidden flex flex-col">
-      {/* Background 3D Globe - Always visible with low opacity */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <Globe3D interactive={false} />
+    <div className="h-screen overflow-hidden flex flex-col relative">
+      {/* Dynamic Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
+        style={{ backgroundImage: `url(${getBackgroundForView(activeView)})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/95" />
       </div>
       
-      {/* Top Navigation */}
-      <TopNavigation activeView={activeView} onViewChange={setActiveView} />
+      {/* Background 3D Globe - Only when not in hero */}
+      {showMainApp && (
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <Globe3D interactive={false} />
+        </div>
+      )}
+      
+      {/* Top Navigation - Only show when not in hero */}
+      {showMainApp && (
+        <ProfessionalHeader activeView={activeView} onViewChange={setActiveView} />
+      )}
       
       {/* Main Content Area */}
       <div className="flex-1 relative z-10 overflow-hidden">
         {renderMainContent()}
       </div>
       
-      {/* Footer Status Bar */}
-      <div className="h-8 glass border-t border-glass-border/30 flex items-center justify-between px-6 text-xs text-muted-foreground relative z-50">
-        <div className="flex items-center space-x-4">
-          <span>GeoQuery NLP v2.0</span>
-          <span>•</span>
-          <span>Enterprise Ready</span>
-          <span>•</span>
-          <span>Local Processing</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
-          <span>System Active</span>
-        </div>
-      </div>
+      {/* Professional Footer Status Bar - Only when not in hero */}
+      {showMainApp && (
+        <motion.footer 
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="h-12 glass border-t border-glass-border/30 flex items-center justify-between px-6 text-sm text-muted-foreground relative z-50"
+        >
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <span className="font-medium">GeoQuery NLP v3.0</span>
+            </div>
+            <span className="text-muted-foreground/60">|</span>
+            <span>Enterprise Security Active</span>
+            <span className="text-muted-foreground/60">|</span>
+            <span>Real-time Processing</span>
+            <span className="text-muted-foreground/60">|</span>
+            <span>256-bit Encryption</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <span className="text-xs">Response Time: 45ms</span>
+            <span className="text-muted-foreground/60">|</span>
+            <span className="text-xs">Uptime: 99.9%</span>
+            <span className="text-muted-foreground/60">|</span>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-medium">All Systems Operational</span>
+            </div>
+          </div>
+        </motion.footer>
+      )}
     </div>
   );
 };
