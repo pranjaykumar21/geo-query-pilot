@@ -58,10 +58,18 @@ const ChatMain: React.FC = () => {
       const result = await apiService.postQuery(query, conversationHistory);
       
       if (result) {
+        // Generate structured response if available
+        let responseContent = '';
+        if (result.metadata?.structured && result.metadata?.categories) {
+          responseContent = generateStructuredResponse(query, result);
+        } else {
+          responseContent = `I found ${result.features?.length || 0} geospatial results for "${query}". ${result.metadata?.count ? `Analyzed ${result.metadata.count} data points.` : ''}`;
+        }
+
         // Add assistant response
         addMessage({
           type: 'assistant',
-          content: `I found ${result.features?.length || 0} geospatial results for "${query}". ${result.metadata?.count ? `Analyzed ${result.metadata.count} data points.` : ''}`,
+          content: responseContent,
           data: result,
         });
         
@@ -87,6 +95,45 @@ const ChatMain: React.FC = () => {
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const generateStructuredResponse = (query: string, result: any) => {
+    const categories = result.metadata?.categories;
+    if (!categories) return `Found ${result.features?.length || 0} results for "${query}".`;
+
+    let response = '';
+    const queryLower = query.toLowerCase();
+    
+    if (queryLower.includes('hospital') && queryLower.includes('cp')) {
+      response = `Hospitals near Connaught Place (CP), Delhi include:\n\n`;
+      
+      if (categories["Public Hospitals"]?.length > 0) {
+        response += `**Public Hospitals**\n\n`;
+        categories["Public Hospitals"].forEach((hospital: any) => {
+          response += `${hospital.name}: ${hospital.description}\n\n`;
+        });
+      }
+      
+      if (categories["Private & Super-Speciality Hospitals"]?.length > 0) {
+        response += `**Private & Super-Speciality Hospitals**\n\n`;
+        categories["Private & Super-Speciality Hospitals"].forEach((hospital: any) => {
+          response += `${hospital.name}: ${hospital.description}\n\n`;
+        });
+      }
+    } else {
+      // Generic structured response for other categories
+      response = `Found ${result.features?.length || 0} results for "${query}":\n\n`;
+      Object.entries(categories).forEach(([categoryName, items]: [string, any]) => {
+        if (items.length > 0) {
+          response += `**${categoryName}**\n\n`;
+          items.forEach((item: any) => {
+            response += `${item.name}: ${item.description}\n\n`;
+          });
+        }
+      });
+    }
+    
+    return response.trim();
   };
 
   return (
