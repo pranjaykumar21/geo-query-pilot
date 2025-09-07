@@ -1,51 +1,27 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere, Box, Torus, Text3D, Float } from '@react-three/drei';
+import { OrbitControls, Text3D, Float } from '@react-three/drei';
 import * as THREE from 'three';
-
-// Floating geometric shapes
-const FloatingShape: React.FC<{ position: [number, number, number]; type: 'sphere' | 'box' | 'torus' }> = ({ position, type }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += 0.01;
-      meshRef.current.rotation.y += 0.01;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime) * 0.2;
-    }
-  });
-
-  const shapes = {
-    sphere: <Sphere ref={meshRef} args={[0.3, 16, 16]} position={position}>
-      <meshStandardMaterial color="#8b5cf6" transparent opacity={0.6} />
-    </Sphere>,
-    box: <Box ref={meshRef} args={[0.4, 0.4, 0.4]} position={position}>
-      <meshStandardMaterial color="#06b6d4" transparent opacity={0.6} />
-    </Box>,
-    torus: <Torus ref={meshRef} args={[0.3, 0.1, 8, 16]} position={position}>
-      <meshStandardMaterial color="#f59e0b" transparent opacity={0.6} />
-    </Torus>
-  };
-
-  return shapes[type];
-};
+import EarthGlobe from './EarthGlobe';
+import GlobeControlPanel from './GlobeControlPanel';
 
 // Animated background particles
 const Particles: React.FC = () => {
   const particlesRef = useRef<THREE.Points>(null);
   
-  const particleCount = 100;
+  const particleCount = 200;
   const positions = new Float32Array(particleCount * 3);
   
   for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 10;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
   }
 
   useFrame(() => {
     if (particlesRef.current) {
-      particlesRef.current.rotation.y += 0.001;
+      particlesRef.current.rotation.y += 0.0005;
+      particlesRef.current.rotation.x += 0.0002;
     }
   });
 
@@ -59,60 +35,152 @@ const Particles: React.FC = () => {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial color="#8b5cf6" size={0.02} sizeAttenuation transparent opacity={0.6} />
+      <pointsMaterial color="#8b5cf6" size={0.01} sizeAttenuation transparent opacity={0.4} />
     </points>
   );
 };
 
+interface OverlayState {
+  graticule: boolean;
+  cities: boolean;
+  clouds: boolean;
+  atmosphere: boolean;
+  weather: boolean;
+  population: boolean;
+  flights: boolean;
+  earthquakes: boolean;
+  customGeoJSON: boolean;
+}
+
 // Main 3D Scene Component
 const Scene3D: React.FC<{ className?: string }> = ({ className = "" }) => {
-  return (
-    <div className={`w-full h-full ${className}`}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-        {/* Lighting */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[10, 10, 5]} intensity={0.8} />
-        <pointLight position={[-10, -10, -5]} intensity={0.4} color="#8b5cf6" />
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+  const controlsRef = useRef<any>(null);
+  
+  const [overlays, setOverlays] = useState<OverlayState>({
+    graticule: true,
+    cities: true,
+    clouds: true,
+    atmosphere: true,
+    weather: false,
+    population: false,
+    flights: false,
+    earthquakes: false,
+    customGeoJSON: false
+  });
 
+  const handleOverlayChange = useCallback((overlay: keyof OverlayState, enabled: boolean) => {
+    setOverlays(prev => ({ ...prev, [overlay]: enabled }));
+  }, []);
+
+  const handleResetView = useCallback(() => {
+    if (controlsRef.current) {
+      controlsRef.current.reset();
+    }
+  }, []);
+
+  const handleSearch = useCallback((query: string) => {
+    console.log('Searching for:', query);
+    // TODO: Implement location search and camera movement
+  }, []);
+
+  const handleFileUpload = useCallback((file: File) => {
+    console.log('Uploaded file:', file.name);
+    // TODO: Implement GeoJSON file processing
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      switch (event.key.toLowerCase()) {
+        case 'r':
+          handleResetView();
+          break;
+        case '+':
+        case '=':
+          if (controlsRef.current) {
+            controlsRef.current.dollyIn(0.9);
+            controlsRef.current.update();
+          }
+          break;
+        case '-':
+          if (controlsRef.current) {
+            controlsRef.current.dollyOut(1.1);
+            controlsRef.current.update();
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleResetView]);
+
+  return (
+    <div className={`w-full h-full relative ${className}`}>
+      <Canvas camera={{ position: [0, 0, 3], fov: 60 }}>
         {/* Background particles */}
         <Particles />
 
-        {/* Floating shapes */}
-        <Float speed={1} rotationIntensity={1} floatIntensity={0.5}>
-          <FloatingShape position={[-2, 1, 0]} type="sphere" />
-        </Float>
-        
-        <Float speed={1.5} rotationIntensity={1.5} floatIntensity={0.7}>
-          <FloatingShape position={[2, -1, -1]} type="box" />
-        </Float>
-        
-        <Float speed={0.8} rotationIntensity={0.8} floatIntensity={0.3}>
-          <FloatingShape position={[0, 0, -2]} type="torus" />
-        </Float>
+        {/* Earth Globe */}
+        <EarthGlobe
+          showGraticule={overlays.graticule}
+          showCities={overlays.cities}
+          showClouds={overlays.clouds}
+          showAtmosphere={overlays.atmosphere}
+        />
 
         {/* 3D Text */}
         <Float speed={2} rotationIntensity={0.1} floatIntensity={0.1}>
           <Text3D
             font="/fonts/Inter_Bold.json"
-            size={0.3}
-            height={0.05}
-            position={[0, 2, 0]}
+            size={0.15}
+            height={0.02}
+            position={[0, 1.8, 0]}
             rotation={[0, 0, 0]}
           >
-            GeoQuery
+            GeoQuery Earth
             <meshStandardMaterial color="#06b6d4" />
           </Text3D>
         </Float>
 
         {/* Interactive controls */}
         <OrbitControls
-          enablePan={false}
-          enableZoom={false}
+          ref={controlsRef}
+          enablePan={true}
+          enableZoom={true}
           enableRotate={true}
-          autoRotate
-          autoRotateSpeed={0.5}
+          autoRotate={false}
+          minDistance={1.5}
+          maxDistance={10}
+          enableDamping={true}
+          dampingFactor={0.05}
         />
       </Canvas>
+
+      {/* Control Panel */}
+      <div className="absolute top-4 right-4 z-10">
+        <GlobeControlPanel
+          overlays={overlays}
+          onOverlayChange={handleOverlayChange}
+          onResetView={handleResetView}
+          onSearch={handleSearch}
+          onFileUpload={handleFileUpload}
+        />
+      </div>
+
+      {/* Instructions */}
+      <div className="absolute bottom-4 left-4 z-10">
+        <div className="bg-background/90 backdrop-blur-sm border border-primary/20 rounded-lg p-3 text-sm">
+          <div className="font-medium text-primary mb-1">3D Globe Controls</div>
+          <div className="text-muted-foreground space-y-1">
+            <div>• Drag to rotate, scroll to zoom</div>
+            <div>• Hover cities for info tooltips</div>
+            <div>• Use control panel for overlays</div>
+            <div>• Press R to reset view</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
