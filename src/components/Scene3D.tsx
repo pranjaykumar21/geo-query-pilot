@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text3D, Float } from '@react-three/drei';
+import { OrbitControls, Text, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import EarthGlobe from './EarthGlobe';
 import GlobeControlPanel from './GlobeControlPanel';
@@ -132,16 +132,15 @@ const Scene3D: React.FC<{ className?: string }> = ({ className = "" }) => {
 
         {/* 3D Text */}
         <Float speed={2} rotationIntensity={0.1} floatIntensity={0.1}>
-          <Text3D
-            font="/fonts/Inter_Bold.json"
-            size={0.15}
-            height={0.02}
+          <Text
             position={[0, 1.8, 0]}
-            rotation={[0, 0, 0]}
+            fontSize={0.2}
+            color="#06b6d4"
+            anchorX="center"
+            anchorY="middle"
           >
             GeoQuery Earth
-            <meshStandardMaterial color="#06b6d4" />
-          </Text3D>
+          </Text>
         </Float>
 
         {/* Interactive controls */}
